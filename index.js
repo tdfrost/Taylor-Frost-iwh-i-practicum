@@ -30,12 +30,25 @@ app.get("/update-contacts", async (req, res) => {
     "Content-Type": "application/json",
   }
   try {
-    const resp = await axios.get(contacts, { headers })
-    const data = resp.data.results
-    res.render("updates", { title: "Contacts | HubSpot APIs", data })
+    res.render("updates", { title: "Contacts | HubSpot APIs" })
   } catch (error) {
     console.error(error)
   }
+})
+
+app.post("/submit", (req, res) => {
+  // Capture the form data
+  const { firstName, lastName, email, jobTitle, company } = req.body
+
+  // Output the captured data (or do something with it)
+  console.log("First Name:", firstName)
+  console.log("Last Name:", lastName)
+  console.log("Email:", email)
+  console.log("Job Title:", jobTitle)
+  console.log("Company:", company)
+
+  // Send a response back to the client
+  res.send("Form submitted successfully!")
 })
 
 /** 
