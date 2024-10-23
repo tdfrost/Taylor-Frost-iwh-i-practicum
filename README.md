@@ -6,6 +6,9 @@ To read the full directions, please go to the [practicum instructions](https://a
 
 **Put your HubSpot developer test account custom objects URL link here:** https://app.hubspot.com/contacts/47829968/objects/0-1/views/all/list
 
+** I used an env file for the API key instead of uploading it to github. The command below is what I had to use to run the file with the env file.**
+node --env-file=.env index.js
+
 ---
 
 ## Tips:

@@ -9,46 +9,71 @@ app.use(express.json())
 
 // * Please DO NOT INCLUDE the private app access token in your repo. Don't do this practicum in your normal account.
 const PRIVATE_APP_ACCESS = process.env.PRIVATE_APP_TOKEN
-console.log(PRIVATE_APP_ACCESS)
-console.log("Test")
+const CONTACT_URL =
+  "https://api.hubspot.com/crm/v3/objects/contacts?limit=100&properties=firstname,lastname,jobtitle,company,email"
 
 // TODO: ROUTE 1 - Create a new app.get route for the homepage to call your custom object data. Pass this data along to the front-end and create a new pug template in the views folder.
 
 // * Code for Route 1 goes here
-
-// TODO: ROUTE 2 - Create a new app.get route for the form to create or update new custom object data. Send this data along in the next route.
-
-// * Code for Route 2 goes here
-
-// TODO: ROUTE 3 - Create a new app.post route for the custom objects form to create or update your custom object data. Once executed, redirect the user to the homepage.
-
-// * Code for Route 3 goes here
-app.get("/update-contacts", async (req, res) => {
-  const contacts = "https://api.hubspot.com/crm/v3/objects/contacts"
+app.get("/", async (req, res) => {
   const headers = {
     Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
     "Content-Type": "application/json",
   }
   try {
-    res.render("updates", { title: "Contacts | HubSpot APIs" })
+    const response = await axios.get(CONTACT_URL, { headers })
+    const data = response.data.results
+    console.log(data)
+    res.render("homepage", { data })
   } catch (error) {
     console.error(error)
   }
 })
 
-app.post("/submit", (req, res) => {
-  // Capture the form data
+// TODO: ROUTE 2 - Create a new app.get route for the form to create or update new custom object data. Send this data along in the next route.
+
+// * Code for Route 2 goes here
+app.get("/update-contacts", async (req, res) => {
+  const headers = {
+    Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
+    "Content-Type": "application/json",
+  }
+  try {
+    res.render("updates", {
+      title:
+        "Update Custom Object Form | Integrating With HubSpot I Practicum.",
+    })
+  } catch (error) {
+    console.error(error)
+  }
+})
+
+// TODO: ROUTE 3 - Create a new app.post route for the custom objects form to create or update your custom object data. Once executed, redirect the user to the homepage.
+
+// * Code for Route 3 goes here
+app.post("/update-contacts", async (req, res) => {
+  const headers = {
+    Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
+    "Content-Type": "application/json",
+  }
   const { firstName, lastName, email, jobTitle, company } = req.body
 
-  // Output the captured data (or do something with it)
-  console.log("First Name:", firstName)
-  console.log("Last Name:", lastName)
-  console.log("Email:", email)
-  console.log("Job Title:", jobTitle)
-  console.log("Company:", company)
+  const contactData = {
+    properties: {
+      firstname: req.body.firstName,
+      lastname: req.body.lastName,
+      email: req.body.email,
+      jobtitle: req.body.jobTitle,
+      company: req.body.company,
+    },
+  }
 
-  // Send a response back to the client
-  res.send("Form submitted successfully!")
+  try {
+    await axios.post(CONTACT_URL, contactData, { headers })
+    res.redirect("/")
+  } catch (err) {
+    console.error(err)
+  }
 })
 
 /** 
